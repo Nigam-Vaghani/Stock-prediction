@@ -18,7 +18,14 @@ Dense.__init__ = _patched_dense_init
 # ---------------------------------------------
 
 # Now we can load the model normally without custom_objects!
-model = load_model("lstm_stock_model.keras")
+model = None
+
+def load_my_model():
+    global model
+    if model is None:
+        # from tensorflow.keras.models import load_model
+        model = load_model("lstm_stock_model.keras", compile=False)
+    return model
 
 scaler = MinMaxScaler(feature_range=(0, 1))
 
@@ -41,6 +48,7 @@ def get_prediction(stock_symbol):
     X_test = np.reshape(last_60, (1, 60, 1))
 
     # Predict
+    model = load_my_model()
     predicted_price = model.predict(X_test)
     predicted_price = scaler.inverse_transform(predicted_price)
 
