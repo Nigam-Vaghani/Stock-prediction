@@ -60,7 +60,7 @@ function App() {
     setData(null);
 
     try {
-      const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "https://stock-prediction-gunicorn.onrender.com";
+      const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "https://cc-final-de9q.onrender.com";
       const res = await fetch(`${BACKEND_URL}/predict`, {
         method: "POST",
         headers: {
