@@ -30,10 +30,11 @@ def load_my_model():
 scaler = MinMaxScaler(feature_range=(0, 1))
 
 def get_prediction(stock_symbol):
-    data = yf.download(stock_symbol, period="3mo")
+    # Fix for Render (free tier has limited CPU, making yf multi-threading fail)
+    data = yf.download(stock_symbol, period="3mo", threads=False)
 
     if data.empty:
-        return None
+        raise ValueError(f"Yahoo Finance returned no data for {stock_symbol}. It might be delisted or Render IP is temporarily blocked.")
 
     close_prices = data[['Close']]
 

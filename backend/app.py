@@ -28,9 +28,6 @@ def predict():
         # Call prediction function
         result = get_prediction(stock)
 
-        if result is None:
-            return jsonify({"error": "Invalid stock symbol"}), 400
-
         return jsonify({
             "stock": stock,
             "current_price": result["current_price"],
