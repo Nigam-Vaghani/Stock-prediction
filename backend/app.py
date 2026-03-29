@@ -6,7 +6,7 @@ import os
 app = Flask(__name__)
 
 # ✅ Allow only the deployed Vercel frontend
-CORS(app, origins=["https://stock-prediction-iota-one.vercel.app"])
+CORS(app, origins=["https://stock-frontend-lyart.vercel.app"])
 
 
 @app.route("/")
