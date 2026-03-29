@@ -60,7 +60,8 @@ function App() {
     setData(null);
 
     try {
-      const res = await fetch("https://stock-prediction-gunicorn.onrender.com/predict", {
+      const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "https://stock-prediction-gunicorn.onrender.com";
+      const res = await fetch(`${BACKEND_URL}/predict`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
