@@ -5,8 +5,8 @@ import os
 
 app = Flask(__name__)
 
-# ✅ Enable CORS (important for frontend communication)
-CORS(app)
+# ✅ Allow only the deployed Vercel frontend
+CORS(app, origins=["https://stock-prediction-iota-one.vercel.app"])
 
 
 @app.route("/")
@@ -46,8 +46,6 @@ def predict():
         }), 500
 
 
-import os
-
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))  # ⚠️ use 10000 default
+    port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)

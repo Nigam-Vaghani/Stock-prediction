@@ -31,7 +31,7 @@ function App() {
     if (!symbol.includes(".") && symbol.length <= 10) {
       if (
         symbol === symbol.toUpperCase() &&
-        !["AAPL","TSLA","GOOGL","AMZN","MSFT","NVDA"].includes(symbol)
+        !["AAPL", "TSLA", "GOOGL", "AMZN", "MSFT", "NVDA"].includes(symbol)
       ) {
         return symbol + ".NS";
       }
@@ -60,7 +60,7 @@ function App() {
     setData(null);
 
     try {
-      const res = await fetch("https://stock-prediction-gunicorn.onrender.com", {
+      const res = await fetch("https://stock-prediction-gunicorn.onrender.com/predict", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
