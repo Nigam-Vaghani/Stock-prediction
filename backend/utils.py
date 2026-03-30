@@ -30,41 +30,29 @@ def load_my_model():
 scaler = MinMaxScaler(feature_range=(0, 1))
 
 def get_prediction(stock_symbol):
-    import requests
+    import ssl
     import urllib3
+    import certifi
+
+    # Fix SSL certificate issues on Render (and similar cloud environments)
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+    ssl._create_default_https_context = ssl._create_unverified_context
 
-    # Only use proxy in production (Render) — set SCRAPER_PROXY_URL env var there
-    proxy_url = os.environ.get("SCRAPER_PROXY_URL")
+    print(f"Fetching data for: {stock_symbol}")
+    data = yf.download(
+        stock_symbol,
+        period="6mo",
+        threads=False,
+        progress=False,
+    )
 
-    download_kwargs = {
-        "tickers": stock_symbol,
-        "period": "6mo",
-        "threads": False,
-        "progress": False,
-    }
-
-    if proxy_url:
-        session = requests.Session()
-        session.verify = False
-        session.proxies.update({
-            "http": proxy_url,
-            "https": proxy_url,
-        })
-        session.headers.update({
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-        })
-        download_kwargs["session"] = session
-
-    print(f"Fetching data for: {stock_symbol} (proxy={'yes' if proxy_url else 'no'})")
-    data = yf.download(**download_kwargs)
     if data.empty:
-        raise ValueError(f"Yahoo Finance returned no data for {stock_symbol}. It might be delisted or Render IP is temporarily blocked.")
+        raise ValueError(f"Yahoo Finance returned no data for {stock_symbol}. Check if it's a valid ticker.")
 
     close_prices = data[['Close']]
 
     # Current price
-    current_price = float(close_prices.iloc[-1][0])
+    current_price = float(close_prices.iloc[-1].values[0])
 
     # Normalize
     scaled_data = scaler.fit_transform(close_prices)
