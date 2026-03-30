@@ -3,7 +3,7 @@ import yfinance as yf
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.models import load_model
 from tensorflow.keras.layers import Dense
-
+import os
 # --- THE NEW WORKAROUND: Monkey-Patching ---
 # 1. Save the original initialization method of the built-in Dense layer
 _original_dense_init = Dense.__init__
@@ -30,26 +30,34 @@ def load_my_model():
 scaler = MinMaxScaler(feature_range=(0, 1))
 
 def get_prediction(stock_symbol):
-    # Fix for Render (free tier has limited CPU, making yf multi-threading fail)
     import requests
-    proxy_url = "http://scraperapi:abf81d1434ca40c3b67a83ed2e0e7627b6d7eb277bd@proxy-server.scraperapi.com:8001"
-    
-    session = requests.Session()
-    session.proxies.update({
-        "http": proxy_url,
-        "https": proxy_url
-    })
-    session.headers.update({
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-    })
-    print("hello")
-    data = yf.download(
-            stock_symbol,
-            period="6mo",
-            threads=False,
-            progress=False,
-            session=session
-        )
+    import urllib3
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+    # Only use proxy in production (Render) — set SCRAPER_PROXY_URL env var there
+    proxy_url = os.environ.get("SCRAPER_PROXY_URL")
+
+    download_kwargs = {
+        "tickers": stock_symbol,
+        "period": "6mo",
+        "threads": False,
+        "progress": False,
+    }
+
+    if proxy_url:
+        session = requests.Session()
+        session.verify = False
+        session.proxies.update({
+            "http": proxy_url,
+            "https": proxy_url,
+        })
+        session.headers.update({
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+        })
+        download_kwargs["session"] = session
+
+    print(f"Fetching data for: {stock_symbol} (proxy={'yes' if proxy_url else 'no'})")
+    data = yf.download(**download_kwargs)
     if data.empty:
         raise ValueError(f"Yahoo Finance returned no data for {stock_symbol}. It might be delisted or Render IP is temporarily blocked.")
 

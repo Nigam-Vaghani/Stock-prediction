@@ -171,7 +171,6 @@ function App() {
               width="100%"
               height="500"
               frameBorder="0"
-              allowTransparency="true"
               scrolling="no"
               allowFullScreen
             />
