@@ -60,7 +60,7 @@ function App() {
     setData(null);
 
     try {
-      const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "https://cc-final-de9q.onrender.com";
+      const BACKEND_URL = import.meta.REACT_APP_BACKEND_URL || "http://localhost:10000";
       const res = await fetch(`${BACKEND_URL}/predict`, {
         method: "POST",
         headers: {
@@ -166,10 +166,13 @@ function App() {
           <div className="chart-container">
             <iframe
               title="stock-chart"
-              src={`https://s.tradingview.com/widgetembed/?symbol=${getChartSymbol()}&interval=D&hidesidetoolbar=1&theme=dark`}
+              src={`https://s.tradingview.com/embed-widget/advanced-chart/?locale=en#%7B%22symbol%22%3A%22${getChartSymbol()}%22%2C%22interval%22%3A%22D%22%2C%22theme%22%3A%22dark%22%2C%22style%22%3A%221%22%2C%22hide_side_toolbar%22%3Atrue%2C%22allow_symbol_change%22%3Afalse%7D`}
               width="100%"
               height="500"
               frameBorder="0"
+              allowTransparency="true"
+              scrolling="no"
+              allowFullScreen
             />
           </div>
         </div>
