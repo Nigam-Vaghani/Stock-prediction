@@ -31,6 +31,18 @@ scaler = MinMaxScaler(feature_range=(0, 1))
 
 def get_prediction(stock_symbol):
     # Fix for Render (free tier has limited CPU, making yf multi-threading fail)
+    import requests
+    proxy_url = "http://scraperapi:abf81d1434ca40c3b67a83ed2e0e7627b6d7eb277bd@proxy-server.scraperapi.com:8001"
+    
+    session = requests.Session()
+    session.proxies.update({
+        "http": proxy_url,
+        "https": proxy_url
+    })
+    session.headers.update({
+        "User-Agent": "Mozilla/5.0 ..."
+    })
+    print("hello")
     data = yf.download(stock_symbol, period="3mo", threads=False)
 
     if data.empty:
