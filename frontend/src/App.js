@@ -1,6 +1,5 @@
 import { useState } from "react";
 import "./App.css";
-
 const STOCKS = [
   { name: "Apple", symbol: "AAPL", exchange: "NASDAQ" },
   { name: "Tesla", symbol: "TSLA", exchange: "NASDAQ" },
@@ -19,7 +18,8 @@ function App() {
   const [customStock, setCustomStock] = useState("");
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
-
+  console.log("ENV  : ", process.env.REACT_APP_BACKEND_URL)
+    console.log("Hello")
   // 🔹 Find selected stock object
   const selectedStockData = STOCKS.find(
     (s) => s.symbol === selectedStock
@@ -58,9 +58,10 @@ function App() {
   const predictStock = async () => {
     setLoading(true);
     setData(null);
-
+    console.log("ENV  : ", process.env.REACT_APP_BACKEND_URL)
+    console.log("Hello")
     try {
-      const BACKEND_URL = import.meta.REACT_APP_BACKEND_URL || "http://localhost:10000";
+      const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:10000";
       const res = await fetch(`${BACKEND_URL}/predict`, {
         method: "POST",
         headers: {

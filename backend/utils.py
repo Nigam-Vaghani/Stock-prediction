@@ -40,11 +40,16 @@ def get_prediction(stock_symbol):
         "https": proxy_url
     })
     session.headers.update({
-        "User-Agent": "Mozilla/5.0 ..."
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
     })
     print("hello")
-    data = yf.download(stock_symbol, period="3mo", threads=False)
-
+    data = yf.download(
+            stock_symbol,
+            period="6mo",
+            threads=False,
+            progress=False,
+            session=session
+        )
     if data.empty:
         raise ValueError(f"Yahoo Finance returned no data for {stock_symbol}. It might be delisted or Render IP is temporarily blocked.")
 
